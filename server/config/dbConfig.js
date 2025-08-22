@@ -1,17 +1,19 @@
 const mongoose = require('mongoose');
 
-const connString = process.env.CONN_STRING;
-if (!connString) {
-  console.error('Missing CONN_STRING environment variable. Exiting.');
-  process.exit(1);
-}
+//Connection logic
+mongoose.connect(process.env.CONN_STRING);
 
-mongoose.connect(connString, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('MongoDB connected');
-}).catch(err => {
-  console.error('MongoDB connection error:', err);
-  process.exit(1);
-});
+//connection state
+const db = mongoose.connection;
+
+//Check DB Connection
+db.on('connected', () => {
+    console.log('DB Connection Successful!')
+})
+
+db.on('err', () => {
+    console.log('DB Connection failed!');
+})
+
+module.exports = db;
+
